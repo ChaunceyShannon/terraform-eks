@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ubuntu
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: ubuntu
+  template:
+    metadata:
+      labels:
+        app: ubuntu
+    spec:
+      # affinity:
+      #   podAntiAffinity:
+      #     requiredDuringSchedulingIgnoredDuringExecution:
+      #       - labelSelector:
+      #           matchExpressions:
+      #             - key: app
+      #               operator: In
+      #               values:
+      #                 - ubuntu
+      #         topologyKey: "kubernetes.io/hostname"
+      containers:
+        - image: ubuntu:20.04
+          imagePullPolicy: IfNotPresent
+          name: ubuntu
+          args:
+            - /bin/sh
+            - -c 
+            - | 
+              sleep 86400d
+
+          volumeMounts:
+            - mountPath: /data
+              name: data
+            
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: ebs-claim
+
