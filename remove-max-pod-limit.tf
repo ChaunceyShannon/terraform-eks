@@ -10,3 +10,16 @@ resource "null_resource" "aws-cni-19" {
     local_file.kubeconfig_file_path,
   ]
 }
+
+resource "null_resource" "aws-enable-prefix-delegation" {
+  provisioner "local-exec" {
+    command = "kubectl set env daemonset aws-node -n kube-system ENABLE_PREFIX_DELEGATION=true"
+    interpreter = ["/bin/bash", "-c"]
+    environment = {
+      KUBECONFIG = var.kubeconfig_file_path
+    }
+  }
+  depends_on = [
+    local_file.kubeconfig_file_path,
+  ]
+}
